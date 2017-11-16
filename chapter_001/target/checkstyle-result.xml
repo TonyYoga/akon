@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="6.11.2">
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/Calculate.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Mag.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Generation.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Elf.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/People.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Undead.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Archer.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Creature.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/package-info.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Warrior.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/Orks.java">
+</file>
+<file name="/home/user/projects/akon/chapter_001/src/main/java/ru/job4j/fantasygame/FantasyGame.java">
+</file>
+</checkstyle>
