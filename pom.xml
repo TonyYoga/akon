@@ -14,7 +14,9 @@
      </properties>
 
     <modules>
+       <module>FantasyGame</module>
        <module>chapter_001</module>
+       <module>chapter_005</module>
      </modules>
 
     <dependencies>
