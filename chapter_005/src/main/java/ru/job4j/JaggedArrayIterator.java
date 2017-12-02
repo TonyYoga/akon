@@ -17,7 +17,9 @@ public class JaggedArrayIterator implements Iterator {
     public boolean hasNext() {
         // проверка на следующий элемент. Проверяем попадает ли индекс следующего элемента в диапазон матрицы
         //return values.length > indY && values[values.length - 1].length > indX;
-        return (values.length - 1) * (values[values.length - 1].length - 1) >= indY * indX;
+        if ((values.length - 1) * (values[values.length - 1].length - 1) >= indY * indX) return true;
+        else throw new NoSuchElementException();
+        //return (values.length - 1) * (values[values.length - 1].length - 1) >= indY * indX;
     }
 
     @Override

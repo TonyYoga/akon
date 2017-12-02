@@ -25,6 +25,8 @@ public class JaggedArrayIteratorTest {
         assertThat(it.next(), is(3));
         assertThat(it.next(), is(4));
         it.next();
+        it.next();
+        //it.next();
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -34,6 +36,7 @@ public class JaggedArrayIteratorTest {
         assertThat(it.next(), is(1));
         assertThat(it.next(), is(3));
         assertThat(it.next(), is(4));
+        it.next();
         it.next();
     }
 
