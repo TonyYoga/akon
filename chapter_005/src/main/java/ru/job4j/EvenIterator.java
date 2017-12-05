@@ -3,7 +3,7 @@ package ru.job4j;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class EvenIterator implements Iterator{
+public class EvenIterator implements Iterator {
     private final int[] values;
     private int index;
 
@@ -13,13 +13,13 @@ public class EvenIterator implements Iterator{
 
     //метод isEven возвращает true если переданное в метод число - четное
     private boolean isEven(int value) {
-        return value%2==0;
+        return value % 2 == 0;
     }
 
     @Override
     public boolean hasNext() {
         int indexTemp = index; // временный индекс, нужен для того, чтобы не менять основной индекс
-        while (indexTemp+1<values.length) {
+        while (indexTemp + 1 < values.length) {
             if (isEven(values[++indexTemp])) {
                 return true;
             }
@@ -30,13 +30,14 @@ public class EvenIterator implements Iterator{
     @Override
     public Object next() {
         int res;
-        do {
-            res = values[index++];
-        } while (!isEven(res)&&index<values.length);
-        if (isEven(res)) {
+        if (hasNext()) {
+            do {
+                res = values[index++];
+             } while (!isEven(res));
             return res;
+        } else {
+            throw new NoSuchElementException();
         }
-        else throw new NoSuchElementException();
 
     }
 

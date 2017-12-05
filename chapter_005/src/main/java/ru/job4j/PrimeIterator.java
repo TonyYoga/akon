@@ -3,7 +3,7 @@ package ru.job4j;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class PrimeIterator implements Iterator{
+public class PrimeIterator implements Iterator {
     private final int[] values;
     private int index;
 
@@ -12,14 +12,16 @@ public class PrimeIterator implements Iterator{
         this.values = values;
     }
 
-    private boolean isPrime (int value) {
+    private boolean isPrime(int value) {
         int halfValue = value;
-        if (value < 4) return true;
-        else if (value%2==0) return false;
-        else {
+        if (value < 4) {
+            return true;
+        } else if (value % 2 == 0) {
+            return false;
+        } else {
             halfValue = value < 25 ? value : (int) Math.sqrt(value);
             for (int i = 5; i <= halfValue; i = i + 2) {
-                if (value%i==0 && value!=i) {
+                if (value % i == 0 && value != i) {
                     return false;
                 }
 
@@ -30,13 +32,11 @@ public class PrimeIterator implements Iterator{
     @Override
     public boolean hasNext() {
         int indexTemp = index; // временный индекс, нужен для того, чтобы не менять основной индекс
-        while (indexTemp+1<values.length) {
+        while (indexTemp + 1 < values.length) {
             if (isPrime(values[++indexTemp])) {
                 return true;
             }
-            else throw new NoSuchElementException();
         }
-
         return false;
     }
 
@@ -44,14 +44,14 @@ public class PrimeIterator implements Iterator{
     public Object next() {
         int res;
         //if (index)
-        do {
-            res = values[index++];
-        } while (!isPrime(res)&&index<values.length);
-        if (isPrime(res)) {
+        if (hasNext()) {
+            do {
+                res = values[index++];
+            } while (!isPrime(res));
             return res;
+        } else {
+            throw new NoSuchElementException();
         }
-        else throw new NoSuchElementException();
-
     }
 
     @Override

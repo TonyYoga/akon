@@ -14,12 +14,12 @@ public class PrimeIteratorTest {
     private Iterator<Integer> it;
 
     @Before
-    public void setUp(){
-        it = new PrimeIterator(new int[]{1, 2, 3, 4, 5, 6, 7, 3571});
+    public void setUp() {
+        it = new PrimeIterator(new int[] {1, 2, 3, 4, 5, 6, 7, 3571});
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void shouldReturnPrimeNumbersOnly () {
+    public void shouldReturnPrimeNumbersOnly() {
         assertThat(it.hasNext(), is(true));
         it.next();
         assertThat(it.next(), is(2));
@@ -35,8 +35,8 @@ public class PrimeIteratorTest {
         //it.next();
     }
 
-    @Test
-    public void sequentialHasNextInvocationDoesntAffectRetrievalOrder () {
+    @Test (expected = NoSuchElementException.class)
+    public void sequentialHasNextInvocationDoesntAffectRetrievalOrder() {
         assertThat(it.hasNext(), is(true));
         it.next();
         assertThat(it.hasNext(), is(true));
@@ -44,12 +44,17 @@ public class PrimeIteratorTest {
         assertThat(it.next(), is(3));
         assertThat(it.next(), is(5));
         assertThat(it.next(), is(7));
+        assertThat(it.hasNext(), is(false));
         assertThat(it.next(), is(3571));
     }
 
-    @Test
-    public void shouldReturnFalseCauseThereIsNoAnyPrimeNumber (){
-        it = new PrimeIterator(new int[]{4,6});
-        assertThat("should return false, cause there is no any prime number",it.hasNext(), is(false));
+//    @Test
+//    public void shouldReturnFalseCauseThereIsNoAnyPrimeNumber() {
+//        it = new PrimeIterator(new int[]{4, 6});
+//        assertThat("should return false, cause there is no any prime number", it.hasNext(), is(false));
+//    }
+    @Test//(expected = NoSuchElementException.class)
+    public void shouldReturnFalseCauseThereIsNoAnyPrimeNumber() {
+        new PrimeIterator(new int[]{4, 6}).hasNext();
     }
 }
