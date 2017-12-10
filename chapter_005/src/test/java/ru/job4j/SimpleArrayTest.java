@@ -5,13 +5,13 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-public class SimpleListTest {
+public class SimpleArrayTest {
 
     @Test
     public void whenCreateContanierShoudReturnSameType() {
-        SimpleList<String> simpleList = new SimpleList<>(1);
-        simpleList.add("test");
-        String result = simpleList.get(0);
+        SimpleArray<String> simpleArray = new SimpleArray<>(1);
+        simpleArray.add("test");
+        String result = simpleArray.get(0);
 
         assertThat(result, is("test"));
 
@@ -19,32 +19,32 @@ public class SimpleListTest {
 
     @Test (expected = IndexOutOfBoundsException.class)
     public void whenUpdateElementArrayMustContainIt() {
-        SimpleList<String> simpleList = new SimpleList<>(2);
-        simpleList.add("test01");
-        simpleList.add("test02");
-        simpleList.update(1,"upd");
-        String result = simpleList.get(1);
+        SimpleArray<String> simpleArray = new SimpleArray<>(2);
+        simpleArray.add("test01");
+        simpleArray.add("test02");
+        simpleArray.update(1, "upd");
+        String result = simpleArray.get(1);
 
         assertThat(result, is("upd"));
 
-        simpleList.update(2, "wrong");
+        simpleArray.update(2, "wrong");
 
     }
 
     @Test (expected = IndexOutOfBoundsException.class)
     public void whenDeleteElemListExcludeThisElement() {
-        SimpleList<String> simpleList = new SimpleList<>(2);
-        simpleList.add("test01");
-        simpleList.add("test02");
-        simpleList.add("test03");
+        SimpleArray<String> simpleArray = new SimpleArray<>(2);
+        simpleArray.add("test01");
+        simpleArray.add("test02");
+        simpleArray.add("test03");
 
-        assertThat(simpleList.get(1), is("test02"));
+        assertThat(simpleArray.get(1), is("test02"));
 
-        simpleList.delete(1);
+        simpleArray.delete(1);
 
-        assertThat(simpleList.get(1), is("test03"));
+        assertThat(simpleArray.get(1), is("test03"));
 
-        simpleList.delete(4);
+        simpleArray.delete(4);
 
     }
 
