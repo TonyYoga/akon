@@ -32,9 +32,11 @@ public class PrimeIterator implements Iterator {
     @Override
     public boolean hasNext() {
         int indexTemp = index; // временный индекс, нужен для того, чтобы не менять основной индекс
-        while (indexTemp + 1 < values.length) {
-            if (isPrime(values[++indexTemp])) {
+        while (indexTemp < values.length) {
+            if (isPrime(values[indexTemp])) {
                 return true;
+            } else {
+                indexTemp++;
             }
         }
         return false;
@@ -43,7 +45,6 @@ public class PrimeIterator implements Iterator {
     @Override
     public Object next() {
         int res;
-        //if (index)
         if (hasNext()) {
             do {
                 res = values[index++];
