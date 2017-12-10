@@ -15,8 +15,11 @@ public class EvenIteratorTest {
     private Iterator<Integer> it;
 
     @Before
+//    public void setUp() {
+//        it = new EvenIterator(new int[] {1, 2, 3, 4, 5, 6, 7});
+//    }
     public void setUp() {
-        it = new EvenIterator(new int[] {1, 2, 3, 4, 5, 6, 7});
+        it = new EvenIterator(new int[] {2, 3, 5, 4, 6, 8});
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -27,8 +30,11 @@ public class EvenIteratorTest {
         assertThat(it.next(), is(4));
         assertThat(it.hasNext(), is(true));
         assertThat(it.next(), is(6));
+        assertThat(it.hasNext(), is(true));
+        it.next();
         assertThat(it.hasNext(), is(false));
         it.next();
+
     }
 
     @Test
@@ -38,6 +44,7 @@ public class EvenIteratorTest {
         assertThat(it.next(), is(2));
         assertThat(it.next(), is(4));
         assertThat(it.next(), is(6));
+        assertThat(it.next(), is(8));
     }
 
     @Test
