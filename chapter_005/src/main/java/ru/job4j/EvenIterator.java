@@ -19,9 +19,11 @@ public class EvenIterator implements Iterator {
     @Override
     public boolean hasNext() {
         int indexTemp = index; // временный индекс, нужен для того, чтобы не менять основной индекс
-        while (indexTemp + 1 < values.length) {
-            if (isEven(values[++indexTemp])) {
+        while (indexTemp < values.length) {
+            if (isEven(values[indexTemp])) {
                 return true;
+            } else {
+                indexTemp++;
             }
         }
         return false;
