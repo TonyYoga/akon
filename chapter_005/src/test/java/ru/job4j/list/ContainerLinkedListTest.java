@@ -18,7 +18,7 @@ public class ContainerLinkedListTest {
     public void setUp() {
         list = new ContainerLinkedList<>();
         for (int i = 0; i < 10; i++) {
-            list.add("test"+i);
+            list.add("test" + i);
         }
     }
 

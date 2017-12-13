@@ -3,8 +3,8 @@ package ru.job4j.list;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ContainerLinkedList<E> implements Iterable<E>{
-    private Node<E> root;
+public class ContainerLinkedList<E> implements Iterable<E> {
+    private Node<E> root, tail;
 
     class Node<E> {
         E value;
@@ -20,21 +20,20 @@ public class ContainerLinkedList<E> implements Iterable<E>{
         }
     }
 
-    void add(E value){
+    void add(E value) {
         if (root == null) {
-            root = new Node<>(value,null,null);
+            root = new Node<>(value, null, null);
+            tail = root;
         } else {
-            Node<E> tmp = root;
-            while (tmp != null){
-                tmp = tmp.next;
-            }
-            tmp = new Node<>(value,null, tmp);
+            Node<E> tmp = new Node<>(value, null, tail); // new node  with field prev pointing on the previuos element
+            tail.next = tmp; // tail field next pointing on new element
+            tail = tmp; // new tail
         }
     }
 
-    E get(int index){
+    E get(int index) {
         Node<E> tmp = root;
-        while (tmp != null){
+        while (tmp != null) {
             if (index == tmp.index) {
                 return tmp.value;
             } else {
@@ -51,8 +50,8 @@ public class ContainerLinkedList<E> implements Iterable<E>{
             private Node<E> current = root;
 
             @Override
-            public boolean hasNext() {
-                return current!=null ? true : false;
+            public boolean hasNext()  {
+                return current != null ? true : false;
             }
 
             @Override
