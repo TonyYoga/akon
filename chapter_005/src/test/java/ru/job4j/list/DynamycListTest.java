@@ -17,7 +17,7 @@ public class DynamycListTest {
     public void setUp() {
         dl = new DynamycList<>();
         for (int i = 0; i < 10; i++) {
-            dl.add("test"+i);
+            dl.add("test" + i);
         }
     }
 

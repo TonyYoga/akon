@@ -3,7 +3,7 @@ package ru.job4j.list;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class DynamycList<E> implements Iterable<E>{
+public class DynamycList<E> implements Iterable<E> {
     Object[] container;
     int last = 0; // pointed on last element
 
@@ -15,8 +15,8 @@ public class DynamycList<E> implements Iterable<E>{
     Search and fill next null-element at the container.
     If container is full - make it bigger: +10 elements;
      */
-    boolean add(E value){
-        if(last < container.length) {
+    boolean add(E value) {
+        if (last < container.length) {
             container[last++] = value;
             return true;
         } else {
@@ -31,7 +31,7 @@ public class DynamycList<E> implements Iterable<E>{
     }
 
     E get(int index) {
-        if (index < container.length && container[index] != null){
+        if (index < container.length && container[index] != null) {
             return (E) container[index];
         } else {
             throw new IndexOutOfBoundsException();
@@ -45,12 +45,12 @@ public class DynamycList<E> implements Iterable<E>{
             int index = 0;
             @Override
             public boolean hasNext() {
-                return index<container.length && container[index] != null;
+                return index < container.length && container[index] != null;
             }
 
             @Override
             public E next() {
-                if(hasNext()) {
+                if (hasNext()) {
                     return (E) container[index++];
                 } else {
                     throw new NoSuchElementException();
