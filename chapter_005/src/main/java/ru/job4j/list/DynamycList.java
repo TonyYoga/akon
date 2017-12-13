@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 public class DynamycList<E> implements Iterable<E>{
     Object[] container;
+    int last = 0; // pointed on last element
 
     public DynamycList() {
         this.container = new Object[10];
@@ -15,25 +16,23 @@ public class DynamycList<E> implements Iterable<E>{
     If container is full - make it bigger: +10 elements;
      */
     boolean add(E value){
-        for (int index = 0; index < container.length; index++) {
-            if (container[index] == null) {
-                container[index] = value;
-                return true;
+        if(last < container.length) {
+            container[last++] = value;
+            return true;
+        } else {
+            Object[] tmpcontainer = container;
+            container = new Object[container.length + 10];
+            for (int index = 0; index < tmpcontainer.length; index++) {
+                container[index] = tmpcontainer[index];
             }
+            container[last++] = value;
+            return true;
         }
-        Object[] tmpcontainer = container;
-        container = new Object[container.length + 10];
-        for (int index = 0; index < tmpcontainer.length; index++) {
-            container[index] = tmpcontainer[index];
-        }
-        container[tmpcontainer.length] = value;
-        return true;
     }
 
     E get(int index) {
-        E value;
         if (index < container.length && container[index] != null){
-           return (E) container[index];
+            return (E) container[index];
         } else {
             throw new IndexOutOfBoundsException();
         }
