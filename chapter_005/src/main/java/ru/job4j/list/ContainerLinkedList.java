@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class ContainerLinkedList<E> implements Iterable<E> {
-    private Node<E> root, tail;
-
+    Node<E> root;
+    Node<E> tail;
     class Node<E> {
         E value;
         int index;
