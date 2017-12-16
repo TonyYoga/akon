@@ -1,5 +1,6 @@
 package ru.job4j.list;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -20,18 +21,14 @@ public class DynamycList<E> implements Iterable<E> {
             container[last++] = value;
             return true;
         } else {
-            Object[] tmpcontainer = container;
-            container = new Object[container.length + 10];
-            for (int index = 0; index < tmpcontainer.length; index++) {
-                container[index] = tmpcontainer[index];
-            }
+            container = Arrays.copyOf(container, container.length + 10);
             container[last++] = value;
             return true;
         }
     }
 
     E get(int index) {
-        if (index < container.length && container[index] != null) {
+        if (index < last) {
             return (E) container[index];
         } else {
             throw new IndexOutOfBoundsException();
@@ -45,7 +42,7 @@ public class DynamycList<E> implements Iterable<E> {
             int index = 0;
             @Override
             public boolean hasNext() {
-                return index < container.length && container[index] != null;
+                return index < last;
             }
 
             @Override
