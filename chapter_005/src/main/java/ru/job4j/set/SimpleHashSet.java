@@ -1,7 +1,7 @@
 package ru.job4j.set;
 
 
-public class SimpleHashSet<E>{
+public class SimpleHashSet<E> {
     private int arraylength = 100;
     private Object[] hashtab = new Object[arraylength];
     private int counter = 0;
