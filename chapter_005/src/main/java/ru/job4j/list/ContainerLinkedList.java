@@ -12,7 +12,7 @@ public class ContainerLinkedList<E> implements Iterable<E> {
         Node<E> next;
         Node<E> prev;
 
-        public Node(E value, Node next, Node prev) {
+        Node(E value, Node next, Node prev) {
             this.value = value;
             this.next = next;
             this.prev = prev;
@@ -20,7 +20,7 @@ public class ContainerLinkedList<E> implements Iterable<E> {
         }
     }
 
-    void add(E value) {
+    public boolean add(E value) {
         if (root == null) {
             root = new Node<>(value, null, null);
             tail = root;
@@ -29,9 +29,10 @@ public class ContainerLinkedList<E> implements Iterable<E> {
             tail.next = tmp; // tail field next pointing on new element
             tail = tmp; // new tail
         }
+        return true;
     }
 
-    E get(int index) {
+    public E get(int index) {
         Node<E> tmp = root;
         while (tmp != null) {
             if (index == tmp.index) {
@@ -51,7 +52,7 @@ public class ContainerLinkedList<E> implements Iterable<E> {
 
             @Override
             public boolean hasNext()  {
-                return current != null ? true : false;
+                return current != null;
             }
 
             @Override
