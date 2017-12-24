@@ -47,7 +47,7 @@ public class SimpleHashSet<E> {
         for (int i = 0; i < table.length; i++) {
             if (table[i] != null) {
                 E value = (E) table[i];
-                tmp[value.hashCode()] = value;
+                tmp[getIndex(value)] = value;
             }
         }
         return tmp;
