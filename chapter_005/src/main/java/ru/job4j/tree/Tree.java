@@ -9,7 +9,9 @@ public class Tree<E> implements SimpleTree<E> {
     public Tree(E value) {
         this.root = new Node<>(value);
     }
-
+/*
+Method to add unique elements
+ */
     @Override
     public boolean add(E parent, E child) {
         if (parent == null || child == null) {
@@ -28,7 +30,9 @@ public class Tree<E> implements SimpleTree<E> {
 
         return false;
     }
-
+    /*
+    Method to search elements at the Tree
+     */
     @Override
     public Optional<Node<E>> findBy(E value) {
         Optional<Node<E>> rsl = Optional.empty();
@@ -45,6 +49,24 @@ public class Tree<E> implements SimpleTree<E> {
             }
         }
         return rsl;
+    }
+/*
+    Exploring of the binary tree
+ */
+    public boolean isBinary() {
+        if (root == null) {
+            return false;
+        }
+        Queue<Node<E>> data = new LinkedList<>();
+        data.offer(this.root);
+        while (!data.isEmpty()) {
+            Node<E> tmp = data.poll();
+            if (tmp.leaves().size() > 2) {
+                return false;
+            }
+            data.addAll(tmp.leaves());
+        }
+        return true;
     }
 
     @Override
