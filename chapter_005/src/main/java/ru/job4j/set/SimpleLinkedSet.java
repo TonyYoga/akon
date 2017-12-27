@@ -8,7 +8,7 @@ public class SimpleLinkedSet<E> extends ContainerLinkedList<E> {
     public boolean add(E e) {
         Iterator<E> it = iterator();
         while (it.hasNext()) {
-            if (it.next() == e) {
+            if (it.next().equals(e)) {
                 return false;
             }
         }
