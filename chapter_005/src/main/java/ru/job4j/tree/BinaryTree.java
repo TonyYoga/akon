@@ -1,6 +1,10 @@
 package ru.job4j.tree;
 
 
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BinaryTree<E extends Comparable<? super E>> {
     private BiNode<E> root;
     private BiNode<E> current;
@@ -36,7 +40,34 @@ public class BinaryTree<E extends Comparable<? super E>> {
                 return;
             }
             current = current.right;
-            recursiveSerachAndAdd(node);
+            //recursiveSerachAndAdd(node);
+            searchAndAddBFS(node);
         }
+    }
+
+    private void searchAndAddBFS(BiNode<E> node) {
+        Queue<BiNode<E>> treestek = new LinkedList<>();
+        if (root == null) {
+            root = node;
+            return;
+        }
+        treestek.offer(root);
+        while (!treestek.isEmpty()) {
+            BiNode<E> current = treestek.poll();
+            if (current.compareTo(node.value) <= 0) {
+                if (current.left == null) {
+                    current.left = node;
+                    return;
+                }
+                treestek.offer(current.left);
+            } else {
+                if (current.right == null) {
+                    current.right = node;
+                    return;
+                }
+                treestek.offer(current.right);
+            }
+        }
+
     }
 }
