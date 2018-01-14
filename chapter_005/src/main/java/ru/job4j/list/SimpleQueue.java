@@ -1,6 +1,8 @@
 package ru.job4j.list;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.NoSuchElementException;
+import java.util.Vector;
 
 public class SimpleQueue<E> {
 
@@ -13,7 +15,6 @@ public class SimpleQueue<E> {
     FIFO logic. When poll - return and remove node. After that decrement all indexs on queue;
      */
     public E poll() {
-
         if (cll.root != null) {
             E value = cll.root.value;
             if (cll.root.next != null) {
