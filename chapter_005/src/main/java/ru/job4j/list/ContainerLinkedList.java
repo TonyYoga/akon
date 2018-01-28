@@ -1,11 +1,19 @@
 package ru.job4j.list;
+//#159
+
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+@ThreadSafe
 public class ContainerLinkedList<E> implements Iterable<E> {
-    Node<E> root;
+    @GuardedBy("this")
+    volatile Node<E> root;
+    @GuardedBy("this")
     Node<E> tail;
+
     class Node<E> {
         E value;
         int index;
@@ -20,7 +28,7 @@ public class ContainerLinkedList<E> implements Iterable<E> {
         }
     }
 
-    public boolean add(E value) {
+    public synchronized boolean add(E value) {
         if (root == null) {
             root = new Node<>(value, null, null);
             tail = root;
