@@ -2,64 +2,59 @@ package ru.job4j.threads;
 
 public class OutputWaiter {
 
-    public OutputWaiter() {
-        new MainThread();
+    private volatile boolean waiter = false;
+    private MainThread mt;
+    private Calculator calc;
 
-        try {
-            new Calculator().t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    synchronized void someCalculation() {
-        for (int i = 0; i < 10; i++) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            System.out.println("Some calculations" + i);
-        }
-
-        notify();
-        }
-
-    synchronized void printInfo() {
-
-        System.out.println("Start program");
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("End program");
-
+    OutputWaiter() {
+        mt = new MainThread();
+        calc = new Calculator();
     }
 
     public class MainThread implements Runnable {
-        Thread t;
-        public MainThread() {
-           t =  new Thread(this);
-           t.start();
-        }
 
         @Override
         public void run() {
-            printInfo();
+            System.out.println("Start program");
+//            try {
+//                wait();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            while (true) {
+                if (waiter) {
+                    break;
+                }
+            }
+            System.out.println("End program");
         }
     }
 
     public class Calculator implements Runnable {
-        Thread t;
-        public Calculator() {
-            t = new Thread(this);
-            t.start();
-        }
 
         @Override
         public void run() {
-            someCalculation();
+            TextSpaceWordCounter tswc = new TextSpaceWordCounter("chapter_002/src/main/resources/test.txt");
+            tswc.countIt();
+            //mt.notify();
+            waiter = true;
         }
+    }
+
+    public static void main(String[] args) {
+        OutputWaiter ow = new OutputWaiter();
+        Thread mainThread = new Thread(ow.mt, "Thread info");
+        Thread calcThread = new Thread(ow.calc, "Thread calc");
+        mainThread.start();
+        calcThread.start();
+
+        try {
+            mainThread.join();
+            calcThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
