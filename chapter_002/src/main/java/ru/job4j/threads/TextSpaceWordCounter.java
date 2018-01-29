@@ -13,12 +13,12 @@ public class TextSpaceWordCounter {
     }
 
     private class SpaceCounter implements Runnable {
-        private Thread thread;
-
-        private SpaceCounter() {
-            thread = new Thread(this, "Thread for space");
-            thread.start();
-        }
+//        private Thread thread;
+//
+//        private SpaceCounter() {
+//            thread = new Thread(this, "Thread for space");
+//            thread.start();
+//        }
 
         @Override
         public void run() {
@@ -44,12 +44,12 @@ public class TextSpaceWordCounter {
     }
 
     private class WordCounter implements Runnable {
-        private Thread thread;
-
-        private WordCounter() {
-            thread = new Thread(this, "Thread for words");
-            thread.start();
-        }
+//        private Thread thread;
+//
+//        private WordCounter() {
+//            thread = new Thread(this, "Thread for words");
+//            thread.start();
+//        }
 
         @Override
         public void run() {
@@ -70,6 +70,7 @@ public class TextSpaceWordCounter {
                         }
                     }
                 }
+                fr.close();
                 System.out.println(String.format("Word counter: %s", wordcount));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -80,8 +81,10 @@ public class TextSpaceWordCounter {
     }
 
     public void countIt() {
-        Thread t1 = new WordCounter().thread;
-        Thread t2 = new SpaceCounter().thread;
+        Thread t1 = new Thread(new WordCounter(), "Thread for wordCounter");
+        Thread t2 = new Thread(new SpaceCounter(), "Thread for spaceCounter");
+        t1.start();
+        t2.start();
         try {
             t1.join();
             t2.join();
