@@ -1,50 +1,59 @@
 package ru.job4j.monitore;
 
 
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import java.util.ArrayList;
 
 @ThreadSafe
-public class UserStorage {
-    private final ArrayList<User> users;
+class UserStorage {
+    @GuardedBy("this")
+    private volatile ArrayList<User> users;
 
-    public UserStorage() {
+    UserStorage() {
         this.users = new ArrayList<>();
     }
 
 
     boolean add(User user) {
+
         for (User u : users) {
             if (u.getId() == user.getId()) {
                 return false;
             }
         }
         users.add(user);
+
         return true;
     }
 
     boolean update(User user) {
+
         for (User u : users) {
             if (u.getId() == user.getId()) {
                 u.setAmount(user.getAmount());
                 return true;
             }
         }
+
         return false;
     }
 
     boolean delete(User user) {
+
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId() == user.getId()) {
                 users.remove(i);
                 return true;
             }
         }
+
         return false;
     }
 
     boolean transfer(int id, int toid, int amount) {
+
         User fromUser = null, toUser = null;
         for (User u : users) {
             if (u.getId() == id) {
@@ -64,6 +73,7 @@ public class UserStorage {
             fromUser.setAmount(fromUser.getAmount() - amount);
             return true;
         }
+
         return false;
     }
 }
