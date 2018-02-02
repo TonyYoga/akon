@@ -12,13 +12,15 @@ public class YandexTaskLoggerTest {
     public void loggerTest() {
         ytl = new YandexTaskLogger();
 
-        ytl.logmaker("test");
+        for (int i = 0; i < 100; i++) {
+            ytl.add("test " + i);
+        }
 
-        System.out.println(ytl.printLogCounter(60000));
+        System.out.println(ytl.countBy(60000));
         //1000*60 = 60000 милисек - минута
-        System.out.println(ytl.printLogCounter(3600000));
+        System.out.println(ytl.countBy(60000));
         //1000*60*60 = 3600000 милисек - час
-        System.out.println(ytl.printLogCounter(86400000));
+        System.out.println(ytl.countBy(60000));
         //1000*60*60*24 = 86400000 милисек - сутки
 
     }
