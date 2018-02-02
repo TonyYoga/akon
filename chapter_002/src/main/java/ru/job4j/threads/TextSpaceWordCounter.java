@@ -13,18 +13,13 @@ public class TextSpaceWordCounter {
     }
 
     private class SpaceCounter implements Runnable {
-//        private Thread thread;
-//
-//        private SpaceCounter() {
-//            thread = new Thread(this, "Thread for space");
-//            thread.start();
-//        }
+
 
         @Override
         public void run() {
 
-            try {
-                FileReader fr = new FileReader(filename);
+            try (FileReader fr = new FileReader(filename)) {
+
                 while (fr.ready()) {
                     if (fr.read() == 32) {
                         spacecount++;
@@ -44,18 +39,13 @@ public class TextSpaceWordCounter {
     }
 
     private class WordCounter implements Runnable {
-//        private Thread thread;
-//
-//        private WordCounter() {
-//            thread = new Thread(this, "Thread for words");
-//            thread.start();
-//        }
+
 
         @Override
         public void run() {
             boolean prevSym = false;
-            try {
-                FileReader fr = new FileReader(filename);
+            try (FileReader fr = new FileReader(filename)) {
+
                 while (fr.ready()) {
                     int sym = fr.read();
                     if (((sym >= 65) && (sym <= 90)) || ((sym >= 97) && (sym <= 122))) {
@@ -70,7 +60,7 @@ public class TextSpaceWordCounter {
                         }
                     }
                 }
-                fr.close();
+
                 System.out.println(String.format("Word counter: %s", wordcount));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
