@@ -9,14 +9,14 @@ import java.util.ArrayList;
 @ThreadSafe
 class UserStorage {
     @GuardedBy("this")
-    private volatile ArrayList<User> users;
+    private ArrayList<User> users;
 
     UserStorage() {
         this.users = new ArrayList<>();
     }
 
 
-    boolean add(User user) {
+    synchronized boolean add(User user) {
 
         for (User u : users) {
             if (u.getId() == user.getId()) {
@@ -28,7 +28,7 @@ class UserStorage {
         return true;
     }
 
-    boolean update(User user) {
+    synchronized boolean update(User user) {
 
         for (User u : users) {
             if (u.getId() == user.getId()) {
@@ -40,7 +40,7 @@ class UserStorage {
         return false;
     }
 
-    boolean delete(User user) {
+    synchronized boolean delete(User user) {
 
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId() == user.getId()) {
@@ -52,7 +52,7 @@ class UserStorage {
         return false;
     }
 
-    boolean transfer(int id, int toid, int amount) {
+    synchronized boolean transfer(int id, int toid, int amount) {
 
         User fromUser = null, toUser = null;
         for (User u : users) {
