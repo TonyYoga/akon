@@ -5,79 +5,55 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class TreedInteraptor {
-    private CountChar countChar;
     private long workTime;
-    private String filename;
-    private long startTimer;
+    private static String filename;
+    private volatile boolean timeOut;
+
+    public boolean isTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(boolean timeOut) {
+        this.timeOut = timeOut;
+    }
 
     public TreedInteraptor(long ms, String filename) {
-        this.workTime = ms * 1000000; //to nanosec
+        this.workTime = ms; //to nanosec
         this.filename = filename;
-        startTimer = System.nanoTime();
-        countChar = new CountChar();
-        try {
 
-            new Time().thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 
     }
 
-    public class Time implements Runnable {
-        Thread thread;
-
-
-        public Time() {
-            thread = new Thread(this, "Counting time");
-            this.thread.start();
-        }
+    public class TimeCount implements Runnable {
 
         @Override
         public void run() {
-
-            //System.out.println(String.format("%s ... %s", t1,  workTime));
-            while ((System.nanoTime() - startTimer < workTime) && countChar.thread.isAlive()) {
-                System.out.println(); //do cycle while we have time and counting process alive
+            try {
+                Thread.sleep(workTime);
+                setTimeOut(true);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-
-            //mark process if time over
-            if (!countChar.thread.isInterrupted() && countChar.thread.isAlive()) {
-                countChar.thread.interrupt();
-                //System.out.println(countChar.thread.isInterrupted());
-                //System.out.println("Thread was interrupted");
-
-            }
-
         }
+
     }
 
     public class CountChar implements Runnable {
-        Thread thread;
-
-        public CountChar() {
-            thread = new Thread(this, "Char counting");
-            thread.start();
-
-        }
 
         @Override
         public void run() {
             int charcounter = 0;
-            //System.out.println(thread.isInterrupted());
-            try {
-                FileReader fr = new FileReader(filename);
-                while (fr.ready() && !thread.isInterrupted()) {
+            try (FileReader fr = new FileReader(filename)) {
+
+                while (fr.ready() && !Thread.currentThread().isInterrupted()) {
                     int sym = fr.read();
                     if (((sym >= 32) && (sym <= 126))) {
                         charcounter++;
                     }
                 }
-                if (thread.isInterrupted()) {
-                    System.out.println("Thread was interrupted");
-                }
                 System.out.println(String.format("Char counter: %s", charcounter));
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -85,5 +61,26 @@ public class TreedInteraptor {
             }
 
         }
+    }
+
+    void doWork() {
+        Thread timecount = new Thread(new TimeCount(), "Timer thread");
+        Thread counter = new Thread(new CountChar(), "Counting thread");
+        timecount.start();
+        counter.start();
+
+
+        while (counter.isAlive()) {
+            if (isTimeOut()) {
+                counter.interrupt();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        TreedInteraptor ti = new TreedInteraptor(50, "chapter_002/src/main/resources/test.txt");
+        ti.doWork();
+
+
     }
 }
