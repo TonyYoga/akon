@@ -16,11 +16,6 @@ public class OutputWaiter {
         @Override
         public void run() {
             System.out.println("Start program");
-//            try {
-//                wait();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             while (true) {
                 if (waiter) {
                     break;
@@ -36,7 +31,6 @@ public class OutputWaiter {
         public void run() {
             TextSpaceWordCounter tswc = new TextSpaceWordCounter("chapter_002/src/main/resources/test.txt");
             tswc.countIt();
-            //mt.notify();
             waiter = true;
         }
     }
