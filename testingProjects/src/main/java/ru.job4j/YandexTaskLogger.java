@@ -35,12 +35,11 @@ public class YandexTaskLogger {
 
     }
 
-    int countBy(long period) {
+    int countBy(long period, long curTime) {
         int counter = 0;
-        Date date = new Date();
-        long curTime = date.getTime();
+        long timeLabel = curTime - period;
         for (int i = loglist.size() - 1; i >= 0 ; i--) {
-            if (loglist.get(i).getDate() > (curTime - period)) {
+            if (loglist.get(i).getDate() > timeLabel) {
                 counter++;
             }
             else {
@@ -49,5 +48,27 @@ public class YandexTaskLogger {
 
         }
         return counter;
+    }
+
+    int binsearch(long period, long curTime) {
+        long timeLabel = curTime - period;
+        int indStart = 0;
+        int indEnd = loglist.size() - 1;
+        int size = loglist.size();
+        int indMidle = 0;
+        while(size > 1) {
+            indMidle = indStart + (indEnd - indStart) / 2;
+            if (loglist.get(indMidle).getDate() == timeLabel) {
+                return loglist.size() - 1 - indMidle;
+            } else if (loglist.get(indMidle).getDate() < timeLabel) {
+                indStart = indMidle;
+            } else if (loglist.get(indMidle).getDate() > timeLabel) {
+                indEnd = indMidle;
+            }
+            size = indEnd - indStart;
+
+        }
+
+        return loglist.size() - 1 - indStart;
     }
 }
