@@ -1,4 +1,4 @@
-package ru.job4j.waitNotifyNotifyAll;
+package ru.job4j.waitnotifynotifyall;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -40,12 +40,13 @@ public class ParallelSearch {
 
                     @Override
                     public FileVisitResult preVisitDirectory(Object dir, BasicFileAttributes attrs) throws IOException {
-                        return null;
+                        return FileVisitResult.CONTINUE;
                     }
 
                     @Override
                     public FileVisitResult visitFile(Object file, BasicFileAttributes attrs) throws IOException {
                         String extension = "";
+
                         int i = file.toString().lastIndexOf(".");
                         if (i >= 1) {
                             extension = file.toString().substring(i + 1);
@@ -62,18 +63,19 @@ public class ParallelSearch {
 
                     @Override
                     public FileVisitResult visitFileFailed(Object file, IOException exc) throws IOException {
-                        return null;
+                        return FileVisitResult.CONTINUE;
                     }
 
                     @Override
                     public FileVisitResult postVisitDirectory(Object dir, IOException exc) throws IOException {
-                        return null;
+                        return FileVisitResult.CONTINUE;
                     }
 
                 };
 
                 try {
-                    Files.walkFileTree(Paths.get(root), visitor);
+                    Path p = Paths.get(root);
+                    Files.walkFileTree(p, visitor);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -95,7 +97,9 @@ public class ParallelSearch {
                                 BufferedReader br = new BufferedReader(new FileReader(file));
                                 while (br.ready() && !isFound) {
                                     Matcher m = pattern.matcher(br.readLine());
+
                                     if (m.matches()) {
+
                                         isFound = true;
                                         path.add(curfile);
                                     }
@@ -114,6 +118,7 @@ public class ParallelSearch {
         read.start();
         try {
             search.join();
+            read.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -127,9 +132,9 @@ public class ParallelSearch {
     public static void main(String[] args) {
         List<String> extensions = new ArrayList<>();
         extensions.add("txt");
-
-        ParallelSearch ps = new ParallelSearch("/home/user/projects/akon", "test", extensions);
+        ParallelSearch ps = new ParallelSearch("/home/user", "test", extensions);
         ps.init();
+        System.out.println(ps.result());
     }
 
 
