@@ -23,27 +23,52 @@ public class SimpleBlockingQueue<T> {
     public void offer(T value) throws InterruptedException {
         synchronized (lock) {
             if (queue.size() > 10) {
-                lock.wait();
+                System.out.println("block offer");
+                changeBlock(true);
             }
             queue.add(value);
+            System.out.println("offer " + value);
+            if (block) {
+                changeBlock(false);
+            }
             //add
         }
 
     }
 
-    public T peek() throws InterruptedException {
+    public T poll() throws InterruptedException {
         T value;
         synchronized (lock) {
             if (queue.isEmpty()) {
-                lock.wait();
+                System.out.println("block poll");
+                changeBlock(true);
             }
-            value = queue.peek();
+            value = queue.poll();
+            System.out.println("peek " + value);
+            if (block) {
+                changeBlock(false);
+            }
+            //peek
         }
         return value;
     }
 
-    private void changeBlock() {
+    void changeBlock(boolean enable) throws InterruptedException {
+        if (enable) {
+            synchronized (lock) {
+                //System.out.println("block");
+                this.block = enable;
+                lock.wait();
+            }
+        } else { //unblock
+            synchronized (lock) {
+                System.out.println("unblock");
+                this.block = enable;
+                lock.notify();
+            }
+        }
 
     }
+
 
 }
