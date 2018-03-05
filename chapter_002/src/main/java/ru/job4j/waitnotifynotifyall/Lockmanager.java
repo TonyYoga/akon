@@ -21,6 +21,7 @@ public class Lockmanager {
 
             if (isLocked) {
                 synchronized (lock) {
+                    isLocked = false;
                     System.out.println("I unlock it");
                     lock.notify();
                 }
@@ -46,6 +47,7 @@ public class Lockmanager {
         Thread second = new Thread() {
             @Override
             public void run() {
+
                 lockmanager.unlock();
             }
         };
