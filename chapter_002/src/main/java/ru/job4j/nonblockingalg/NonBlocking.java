@@ -39,14 +39,20 @@ public class NonBlocking {
         }
     }
 
+    class OplimisticException extends Exception {
+        public OplimisticException(String message) {
+            super(message);
+        }
+    }
+
     public boolean add(Model model) {
         modelcash.put(index++, model);
         return true;
     }
 
-    public  boolean update(int indx, Model model) {
+    public  boolean update(int indx, Model model) throws OplimisticException {
         if (modelcash.get(indx).getVersion() != model.getVersion()) {
-            return false; //здесь выбрасывать исключение
+            throw new OplimisticException("Conflict of version during update");
 
         }
         model.versionUpd();
