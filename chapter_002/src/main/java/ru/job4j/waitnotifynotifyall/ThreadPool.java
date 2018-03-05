@@ -17,7 +17,7 @@ public class ThreadPool {
         }
 
         void doSome() {
-            System.out.println("Start task N "+ num);
+            System.out.println("Start task N " + num);
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
