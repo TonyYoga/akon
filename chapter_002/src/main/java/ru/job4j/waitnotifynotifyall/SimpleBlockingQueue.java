@@ -13,7 +13,7 @@ Pattern Producer - Consumer
 
 @ThreadSafe
 public class SimpleBlockingQueue<T> {
-    private final Object lock = new Object();
+
     private final int size = 10;
     private boolean block = true;
 
@@ -21,7 +21,7 @@ public class SimpleBlockingQueue<T> {
     private Queue<T> queue = new LinkedList<>();
 
     public void offer(T value) throws InterruptedException {
-        synchronized (lock) {
+        synchronized (queue) {
             if (queue.size() > 10) {
                 System.out.println("block offer");
                 changeBlock(true);
@@ -38,7 +38,7 @@ public class SimpleBlockingQueue<T> {
 
     public T poll() throws InterruptedException {
         T value;
-        synchronized (lock) {
+        synchronized (queue) {
             if (queue.isEmpty()) {
                 System.out.println("block poll");
                 changeBlock(true);
@@ -55,16 +55,16 @@ public class SimpleBlockingQueue<T> {
 
     void changeBlock(boolean enable) throws InterruptedException {
         if (enable) {
-            synchronized (lock) {
+            synchronized (queue) {
                 //System.out.println("block");
                 this.block = enable;
-                lock.wait();
+                queue.wait();
             }
         } else { //unblock
-            synchronized (lock) {
+            synchronized (queue) {
                 System.out.println("unblock");
                 this.block = enable;
-                lock.notify();
+                queue.notify();
             }
         }
 

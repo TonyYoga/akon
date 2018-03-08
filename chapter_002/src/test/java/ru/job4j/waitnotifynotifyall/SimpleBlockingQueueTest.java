@@ -6,7 +6,7 @@ import org.junit.Test;
 public class SimpleBlockingQueueTest {
 
     private SimpleBlockingQueue<String> producerNcustomer;
-    Thread producer, customer;
+    private Thread producer, customer;
 
     @Before
     public void setUp() {
