@@ -18,8 +18,8 @@ public class Bomberman {
     }
 
     public static void main(String[] args) {
-        Bomberman bomberman = new Bomberman(20,20);
-        Hero hero1 = new Hero(new Position(1,1), bomberman.getBoard());
+        Bomberman bomberman = new Bomberman(20, 20);
+        Hero hero1 = new Hero(new Position(1, 1), bomberman.getBoard());
         hero1.run();
 //        Thread tr1 = new Thread(hero1, "Hero N1");
 //        tr1.start();

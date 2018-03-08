@@ -44,6 +44,7 @@ public class Hero implements Runnable {
                 }
             case 3:
                 if (moveDown(board)) {
+                    break;
 
                 }
                 break;
@@ -58,7 +59,7 @@ public class Hero implements Runnable {
 
     boolean moveUp(Board board) {
         System.out.println("Try go UP");
-        if(moveLock(board, 0, 1)) {
+        if (moveLock(board, 0, 1)) {
             System.out.println("Go Up");
             return true;
         }
@@ -67,7 +68,7 @@ public class Hero implements Runnable {
 
     boolean moveDown(Board board) {
         System.out.println("Try go Down");
-        if(moveLock(board, 0, -1)) {
+        if (moveLock(board, 0, -1)) {
             System.out.println("Go Down");
             return true;
         }
@@ -77,7 +78,7 @@ public class Hero implements Runnable {
 
     boolean moveLeft(Board board) {
         System.out.println("Try go Left");
-        if(moveLock(board, -1, 0)) {
+        if (moveLock(board, -1, 0)) {
             System.out.println("Go Left");
             return true;
         }
@@ -86,7 +87,7 @@ public class Hero implements Runnable {
 
     boolean moveRight(Board board) {
         System.out.println("Try go Right");
-        if(moveLock(board, 1, 1)) {
+        if (moveLock(board, 1, 1)) {
             System.out.println("Go Right");
             return true;
         }
@@ -110,9 +111,7 @@ public class Hero implements Runnable {
         }
         System.out.println(String.format("X %s : Y %s", nextPositionX, nextpositionY));
         try {
-
-            board.board[nextpositionY][nextPositionX].lock();//.tryLock(500, TimeUnit.MILLISECONDS);
-            //try to lock new cell
+          //try to lock new cell
             if (board.board[nextpositionY][nextPositionX].tryLock(500, TimeUnit.MILLISECONDS)) {
                 //System.out.println("Break point");
                 board.board[current.getY()][current.getX()].unlock(); //unlock previos cell
@@ -120,7 +119,12 @@ public class Hero implements Runnable {
                 current.setX(nextPositionX);
                 return true;
             }
-        } catch (InterruptedException e) {
+        }
+//        catch (NullPointerException e) {
+//            System.out.println("WTF");
+//            return false;
+//        }
+        catch (InterruptedException e) {
             System.out.println("WTF");
             return false;
         }
