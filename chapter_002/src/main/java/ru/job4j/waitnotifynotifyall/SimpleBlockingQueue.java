@@ -18,7 +18,7 @@ public class SimpleBlockingQueue<T> {
     private boolean block = true;
 
     @GuardedBy("this")
-    private Queue<T> queue = new LinkedList<>();
+    private final Queue<T> queue = new LinkedList<>();
 
     public void offer(T value) throws InterruptedException {
         synchronized (queue) {
