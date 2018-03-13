@@ -17,20 +17,18 @@ public class SimpleBlockingQueue<T> {
     private final int size = 10;
     private boolean block = true;
 
-    @GuardedBy("this")
+    @GuardedBy("queue")
     private final Queue<T> queue = new LinkedList<>();
 
     public void offer(T value) throws InterruptedException {
         synchronized (queue) {
-            if (queue.size() > 10) {
-                System.out.println("block offer");
-                changeBlock(true);
+            while (queue.size() > 10) {
+                System.out.println("Queue full - wait");
+                queue.wait();
             }
             queue.add(value);
-            System.out.println("offer " + value);
-            if (block) {
-                changeBlock(false);
-            }
+            queue.notify();
+            System.out.println("offer " + value + " and unblock");
             //add
         }
 
@@ -39,35 +37,17 @@ public class SimpleBlockingQueue<T> {
     public T poll() throws InterruptedException {
         T value;
         synchronized (queue) {
-            if (queue.isEmpty()) {
-                System.out.println("block poll");
-                changeBlock(true);
+            while (queue.isEmpty()) {
+                System.out.println("Queue empty - wait");
+                queue.wait();
             }
             value = queue.poll();
             System.out.println("peek " + value);
-            if (block) {
-                changeBlock(false);
-            }
+            queue.notify();
+            System.out.println("Queue unblock");
             //peek
         }
         return value;
-    }
-
-    void changeBlock(boolean enable) throws InterruptedException {
-        if (enable) {
-            synchronized (queue) {
-                //System.out.println("block");
-                this.block = enable;
-                queue.wait();
-            }
-        } else { //unblock
-            synchronized (queue) {
-                System.out.println("unblock");
-                this.block = enable;
-                queue.notify();
-            }
-        }
-
     }
 
 
