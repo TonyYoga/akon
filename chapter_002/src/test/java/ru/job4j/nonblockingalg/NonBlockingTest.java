@@ -28,7 +28,7 @@ public class NonBlockingTest {
 
     }
 
-    @Test //(expected = NonBlocking.OplimisticException.class)
+    @Test (expected = NonBlocking.OplimisticException.class)
     public void update() {
         NonBlocking.Model mod1upd = mod1;
         NonBlocking.Model mod2upd = mod2;

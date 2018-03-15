@@ -1,6 +1,7 @@
 package ru.job4j.nonblockingalg;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 public class NonBlocking {
     private ConcurrentHashMap<Integer, Model> modelcash = new ConcurrentHashMap<>();
@@ -39,7 +40,7 @@ public class NonBlocking {
         }
     }
 
-    class OplimisticException extends Exception {
+    class OplimisticException extends RuntimeException {
         public OplimisticException(String message) {
             super(message);
         }
@@ -51,14 +52,30 @@ public class NonBlocking {
     }
 
     public  boolean update(int indx, Model model) throws OplimisticException {
+
+        BiFunction<Integer, Model, Model> bf = new BiFunction<Integer, Model, Model>() {
+            @Override
+            public Model apply(Integer key, Model oldModel) {
+                if (model.getVersion() == oldModel.getVersion()) {
+                    model.versionUpd();
+                    return model;
+                }
+                throw  new OplimisticException("Conflict of version during update");
+                //return null;
+
+            }
+        };
+        modelcash.computeIfPresent(indx, bf);
         if (modelcash.get(indx).getVersion() != model.getVersion()) {
             throw new OplimisticException("Conflict of version during update");
 
         }
-        model.versionUpd();
-        modelcash.computeIfPresent(indx, (key, value) -> model);
+        //model.versionUpd();
+        //modelcash.computeIfPresent(indx, (key, value) -> model);
+
         return true;
     }
+
 
     public boolean delete(int indx) {
         if (!modelcash.containsKey(indx)) {
