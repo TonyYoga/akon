@@ -15,14 +15,13 @@ Pattern Producer - Consumer
 public class SimpleBlockingQueue<T> {
 
     private final int size = 10;
-    private boolean block = true;
 
     @GuardedBy("queue")
     private final Queue<T> queue = new LinkedList<>();
 
     public void offer(T value) throws InterruptedException {
         synchronized (queue) {
-            while (queue.size() > 10) {
+            while (queue.size() > size) {
                 System.out.println("Queue full - wait");
                 queue.wait();
             }
