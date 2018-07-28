@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.Date;
 
 public class Input {
-    //boolean endOfWork = false;
+
 
 
     public Item ask() {

@@ -13,7 +13,7 @@ public class StartUI {
 
 
         try (Tracker tracker = new Tracker("chapter_003/src/main/resources/config.properties")) {
-            //try (Tracker tracker = new Tracker("/home/user/projects/akon/chapter_003/src/main/resources/config.properties")) {
+
 
 
             MenuTracker menu = new MenuTracker();

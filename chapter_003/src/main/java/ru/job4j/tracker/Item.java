@@ -19,8 +19,7 @@ public class Item {
 
     public Item() {
     }
-    //    public Item(String iid, String iname, String idesk, long icreate, Array icomm) {
-//    }
+
 
     public String getId() {
         return id;

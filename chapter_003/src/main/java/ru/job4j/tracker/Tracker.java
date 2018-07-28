@@ -34,10 +34,6 @@ public class Tracker implements AutoCloseable{
         this.connection = checkConnection(prop);
     }
 
-    // check if data base not created - create it and return true
-//    private boolean checkNcreateBase() {
-//        return true;
-//    }
 
     private Connection checkConnection(Properties prop) {
         try {
