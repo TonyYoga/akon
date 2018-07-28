@@ -1,5 +1,5 @@
 package ru.job4j.bomberman;
-import ru.job4j.bomberman.*;
+
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +111,7 @@ public class Hero implements Runnable {
         }
         System.out.println(String.format("X %s : Y %s", nextPositionX, nextpositionY));
         try {
-          //try to lock new cell
+            //try to lock new cell
             if (board.board[nextpositionY][nextPositionX].tryLock(500, TimeUnit.MILLISECONDS)) {
                 //System.out.println("Break point");
                 board.board[current.getY()][current.getX()].unlock(); //unlock previos cell
@@ -120,10 +120,6 @@ public class Hero implements Runnable {
                 return true;
             }
         }
-//        catch (NullPointerException e) {
-//            System.out.println("WTF");
-//            return false;
-//        }
         catch (InterruptedException e) {
             System.out.println("WTF");
             return false;

@@ -11,5 +11,13 @@ public class Board {
         this.dimX = dimX;
         this.dimY = dimY;
         board = new ReentrantLock[dimY][dimX];
+        //unlocking board
+        synchronized (board) {
+            for (ReentrantLock[] x : board) {
+                for (ReentrantLock y : x) {
+                    y.tryLock();
+                }
+            }
+        }
     }
 }
