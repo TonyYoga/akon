@@ -2,7 +2,7 @@ package ru.job4j.tracker;
 
 
 public class UpdateItemAction implements Action {
-    private String name = "Create Item";
+    private String name = "Update Item";
 
     @Override
     public String getName() {
@@ -10,9 +10,9 @@ public class UpdateItemAction implements Action {
     }
 
     @Override
-    public boolean execute(Tracker trk, Input input) {
+    public boolean execute(Tracker trk, Input input)   {
         trk.update(input.ask());
-        System.out.println(getName() + "done");
+        System.out.println(getName() + " done");
         return false;
     }
 

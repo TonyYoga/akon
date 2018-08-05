@@ -1,6 +1,8 @@
 package ru.job4j.tracker;
 
-import java.sql.Array;
+
+import java.util.Arrays;
+import java.util.Date;
 
 public class Item {
     private String id;
@@ -59,5 +61,15 @@ public class Item {
 
     public void setComments(String[] comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "Item{"
+                + "id='" + id + '\''
+                + ", name='" + name + '\''
+                + ", desk='" + desk + '\''
+                + ", create=" + new Date(create)
+                + ", comments=" + Arrays.toString(comments) + '}';
     }
 }

@@ -5,36 +5,55 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
-public class Input {
+public class Input implements AutoCloseable {
+    private BufferedReader br;
 
+    public BufferedReader getBr() {
+        return br;
+    }
 
+    public Input() {
+
+        this.br = new BufferedReader(new InputStreamReader(System.in));
+    }
 
     public Item ask() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         Item item = new Item();
         try {
+
             System.out.print("Type id: ");
-            item.setId(br.readLine());
+            item.setId(getBr().readLine());
             System.out.print("Type name: ");
-            item.setName(br.readLine());
+            item.setName(getBr().readLine());
             String[] comments = new String[3];
             int indx = 0;
-            String key;
+            String key = "";
             System.out.print("Type comment or \"exit\" (max 3 rows): ");
-            while (!(key = br.readLine()).equals("exit") && indx < 2) {
+
+            while (!key.equals("exit") && indx < 3) {
+                key = getBr().readLine();
                 comments[indx] = key;
                 indx++;
             }
+
             item.setComments(comments);
             item.setCreate((new Date()).getTime());
             System.out.print("Type description: ");
-            item.setDesk(br.readLine());
+            item.setDesk(getBr().readLine());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return item;
     }
-    void print(String data) {
+    void print(Item item) {
+        System.out.println(item.toString());
+    }
 
+    @Override
+    public void close() throws Exception {
+        br.close();
     }
 }

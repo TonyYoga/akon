@@ -1,15 +1,17 @@
 package ru.job4j.tracker;
 
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
+
 
 public class StartUI {
     boolean endOfWork = false;
 
     void init() {
 
-        //Input input = new Input();
+
+
+        Input input = new Input();
 
 
         try (Tracker tracker = new Tracker("chapter_003/src/main/resources/config.properties")) {
@@ -17,23 +19,21 @@ public class StartUI {
 
 
             MenuTracker menu = new MenuTracker();
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
             String inputKey;
-            while (!endOfWork == true) {
+            while (!endOfWork) {
                 System.out.println("For exit type \"Q\"");
                 System.out.println(menu.toString());
 
                 try {
-                    inputKey = br.readLine();
+                    inputKey = input.getBr().readLine();
                     if (inputKey.equals("Q")) {
                         endOfWork = true;
-                    }
-                    else if (menu.getMenu().containsKey(inputKey) ){
+                    } else if (menu.getMenu().containsKey(inputKey)) {
 
                         //working module if we have right answer
-                        menu.getMenu().get(inputKey).execute(tracker, new Input());
-                    }
-                    else {
+                        menu.getMenu().get(inputKey).execute(tracker, input);
+                    } else {
                         System.out.println("Wrong key, plz retype");
                     }
                 } catch (IOException e) {

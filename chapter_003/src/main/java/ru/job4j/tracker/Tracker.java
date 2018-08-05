@@ -10,32 +10,37 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 
 
-public class Tracker implements AutoCloseable{
+public class Tracker implements AutoCloseable {
 
-    //private Item item;
     private String config;
     private Properties prop;
     private Connection connection;
-    private static final Logger log = LoggerFactory.getLogger(Tracker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Tracker.class);
 
     public Tracker(String config) {
         //connect to DB
-        //prop = getProp("config.properties");
+
         this.config = config;
         this.prop = getProp(config);
-        this.connection = checkConnection(prop);
+        checkConnection(prop);
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
 
-    private Connection checkConnection(Properties prop) {
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    //Check connection and if it need - creating DB and working tables
+    private void checkConnection(Properties prop) {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -44,46 +49,63 @@ public class Tracker implements AutoCloseable{
         String url = prop.getProperty("db.host");
         String login = prop.getProperty("db.login");
         String pass = prop.getProperty("db.password");
+        String dbName = prop.getProperty("db.name");
+        String exists = prop.getProperty("db.exists");
 
         Connection conn = null;
-        try {
+        try  {
+            //Checking DB
             conn = DriverManager.getConnection(url, login, pass);
-        }
-        catch (SQLException ex) {
-            log.error(ex.getMessage(), ex);
-        }
-        finally {
-            if(conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    log.error(e.getMessage(), e);
-                }
+
+            PreparedStatement statement = conn.prepareStatement(exists);
+            statement.setString(1, dbName);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+
+            if (!rs.getBoolean("exists")) {
+                Statement st = conn.createStatement();
+                st.executeUpdate(prop.getProperty("db.create"));
+                conn = DriverManager.getConnection(url + dbName, login, pass);
+                st = conn.createStatement();
+
+
+
+                st.executeUpdate(prop.getProperty("tb.create"));
+
             }
+            conn = DriverManager.getConnection(url + dbName, login, pass);
+
+            setConnection(conn);
+        } catch (SQLException ex) {
+            System.out.println(ex.getErrorCode());
+            LOG.error(ex.getMessage(), ex);
         }
 
-        return conn;
+
     }
 
     public boolean add(Item item) {
-        //Connection conn;
-        //Properties properties = getProp("config.properties");
-        //conn = checkConnection(prop);
 
-//        if (findById(item.getId()) != null) {
-//            return false;
-//        }
+
+        if (findById(item.getId()) != null) {
+            System.out.println("В базе уже существует заявка с таким ИД");
+            return false;
+        }
 
 
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO items (iid, iname, idesk, icreate, icomm) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement = getConnection().prepareStatement("INSERT INTO items (iid, iname, idesk, icreate, icomm) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, item.getId());
             statement.setString(2, item.getName());
             statement.setString(3, item.getDesk());
             statement.setTimestamp(4, new Timestamp(item.getCreate()));
-            statement.setArray(5, connection.createArrayOf("VARCHAR", item.getComments()));
+            statement.setArray(5, getConnection().createArrayOf("VARCHAR", item.getComments()));
 
-            statement.executeUpdate();
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                LOG.error(e.getMessage(), e);
+            }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
 
@@ -94,7 +116,7 @@ public class Tracker implements AutoCloseable{
 
 
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
 
 
@@ -103,71 +125,144 @@ public class Tracker implements AutoCloseable{
     }
 
     public boolean update(Item item) {
+
+        if (findById(item.getId()) == null) {
+            System.out.println("В базе нет заявки с таким ИД");
+            //there will be code with option to add item
+            return false;
+        }
+
+
+        try {
+
+            PreparedStatement statement = getConnection().prepareStatement(prop.getProperty("sql.upd"), Statement.RETURN_GENERATED_KEYS);
+
+            statement.setString(1, item.getName());
+            statement.setString(2, item.getDesk());
+            statement.setTimestamp(3, new Timestamp(item.getCreate()));
+            statement.setArray(4, getConnection().createArrayOf("VARCHAR", item.getComments()));
+            statement.setString(5, item.getId());
+
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                LOG.error(e.getMessage(), e);
+            }
+
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+
+            if (generatedKeys.next()) {
+                System.out.println(generatedKeys.getInt(1));
+            }
+
+
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
         return true;
     }
 
     public Item findById(String id) {
-        Connection conn;
-        Properties properties = getProp(config);
-        //connection// = checkConnection(properties);
 
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE iid = ?");
+            PreparedStatement statement = getConnection().prepareStatement(prop.getProperty("sql.fbId"));
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                return new Item(
-                        rs.getString("iid"),
-                        rs.getString("iname"),
-                        rs.getString("idesk"),
-                        rs.getTimestamp("icreate").getTime(),
-                        (String[]) rs.getArray("icomm").getArray());
+            while (rs.next()) {
+                if (rs.getString("iid").equals(id)) {
+                    return new Item(
+                            rs.getString("iid"),
+                            rs.getString("iname"),
+                            rs.getString("idesk"),
+                            rs.getTimestamp("icreate").getTime(),
+                            (String[]) rs.getArray("icomm").getArray());
+                }
             }
-            //rs.wasNull();
 
 
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
 
-//        if(conn != null) {
-//            try {
-//                conn.close();
-//            } catch (SQLException e) {
-//                log.error(e.getMessage(), e);
-//            }
-//        }
         return null;
     }
 
     public boolean delete(String id) {
+        if (findById(id) == null) {
+            System.out.println("В базе нет заявки с таким ИД");
+            //there will be code with option to add item
+            return false;
+        }
+
+
+        try {
+
+            PreparedStatement statement = getConnection().prepareStatement(prop.getProperty("sql.del"), Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, id);
+
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                LOG.error(e.getMessage(), e);
+            }
+
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+
+            if (generatedKeys.next()) {
+                System.out.println(generatedKeys.getInt(1));
+            }
+
+
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
         return true;
     }
 
-    public Item[] getAll() {
+    public ArrayList<Item> getAll() {
+        try {
+            ArrayList<Item> items = new ArrayList<>();
+            //Item[] items = new Item[];
+            int counter = 0;
+            PreparedStatement statement = getConnection().prepareStatement(prop.getProperty("sql.getall"));
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                //  public Item(String id, String name, String desk, long create, String[] comments)
+                items.add(new Item(
+                        rs.getString("iid"),
+                        rs.getString("iname"),
+                        rs.getString("idesk"),
+                        rs.getTimestamp("icreate").getTime(),
+                        (String[]) rs.getArray("icomm").getArray()));
+            }
+            return items;
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+
         return null;
     }
 
+    //Method for get configs from resourse file
     private Properties getProp(String config) {
         Properties prop = new Properties();
         InputStream inputStream = null;
 
         try {
             inputStream = new FileInputStream(config);
-            //inputStream = new FileInputStream("/home/user/projects/akon/chapter_003/src/main/resources/config.properties");
             prop.load(inputStream);
 
-        }
-        catch (IOException ex) {
-            log.error(ex.getMessage(), ex);
-        }
-        finally {
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                }
-                catch (IOException ex) {
-                    log.error(ex.getMessage(), ex);
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage(), ex);
                 }
             }
         }
@@ -176,11 +271,11 @@ public class Tracker implements AutoCloseable{
 
     @Override
     public void close() throws Exception {
-        if(connection != null) {
+        if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {
-                log.error(e.getMessage(), e);
+                LOG.error(e.getMessage(), e);
             }
         }
 

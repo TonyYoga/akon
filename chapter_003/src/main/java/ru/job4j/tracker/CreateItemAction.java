@@ -12,7 +12,7 @@ public class CreateItemAction implements Action {
     @Override
     public boolean execute(Tracker trk, Input input) {
         trk.add(input.ask());
-        System.out.println(getName() + "done");
+        System.out.println(getName() + " done");
         return true;
     }
 
