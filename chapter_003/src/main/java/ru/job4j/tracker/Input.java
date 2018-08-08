@@ -23,16 +23,16 @@ public class Input implements AutoCloseable {
         try {
 
             System.out.print("Type id: ");
-            item.setId(getBr().readLine());
+            item.setId(br.readLine());
             System.out.print("Type name: ");
-            item.setName(getBr().readLine());
+            item.setName(br.readLine());
             String[] comments = new String[3];
             int indx = 0;
             String key = "";
             System.out.print("Type comment or \"exit\" (max 3 rows): ");
 
             while (!key.equals("exit") && indx < 3) {
-                key = getBr().readLine();
+                key = br.readLine();
                 comments[indx] = key;
                 indx++;
             }
@@ -40,7 +40,7 @@ public class Input implements AutoCloseable {
             item.setComments(comments);
             item.setCreate((new Date()).getTime());
             System.out.print("Type description: ");
-            item.setDesk(getBr().readLine());
+            item.setDesk(br.readLine());
 
         } catch (IOException e) {
             e.printStackTrace();
