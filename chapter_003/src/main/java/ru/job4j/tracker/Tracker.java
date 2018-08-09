@@ -56,7 +56,7 @@ public class Tracker implements AutoCloseable {
             }
             connection = DriverManager.getConnection(url + dbName, login, pass);
 
-        } catch (ClassNotFoundException| SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
 
             LOG.error(ex.getMessage(), ex);
         }
