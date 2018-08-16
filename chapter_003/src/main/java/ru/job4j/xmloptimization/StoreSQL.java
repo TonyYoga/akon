@@ -28,72 +28,63 @@ public class StoreSQL implements AutoCloseable {
         this.properties = getProperties();
 
         try {
-            this.connection = getConnection();
+            getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private Connection getConnection() throws SQLException {
+    private void getConnection() throws SQLException {
         //establishing connection to DB
         String url = properties.getProperty("db.host");
-        try (Connection conn = DriverManager.getConnection(url);
-             Statement statement = conn.createStatement()) {
+        try  {
+            connection = DriverManager.getConnection(url);
+            Statement statement = connection.createStatement();
             Class.forName("org.sqlite.JDBC");
-
             String sql = "CREATE TABLE IF NOT EXISTS itab (i integer PRIMARY KEY);";
             statement.executeUpdate(sql);
             connection = DriverManager.getConnection(url);
             connection.setAutoCommit(false);
             connection.commit();
-            return connection;
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             connection.rollback();
         }
-
-        return null;
     }
 
 
-    public boolean generate(int counter) throws SQLException {
+    public void generate(int counter) throws SQLException {
         //do generation og i-fields in DB
 
         if (counter < 1) {
-            System.out.println("wrong data");
-            return false;
+            throw  new IllegalStateException("wrong data...");
         }
         String sql = "INSERT INTO itab(i) VALUES (?);";
         String sqlDel = "DELETE FROM itab;";
-
-
         try (Connection conn = connection;
              PreparedStatement preparedStatementDel = conn.prepareStatement(sqlDel);
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             //System.out.println("connection " + conn.isClosed());
-
             preparedStatementDel.executeUpdate();
             for (int j = 0; j < counter; j++) {
                 preparedStatement.setInt(1, j);
                 preparedStatement.executeUpdate();
             }
             connection.commit();
-
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
         }
-
-        return true;
     }
 
-    public List<StoreXML.Field> getData() {
+    public List<StoreXML.Field> getData() throws SQLException {
         //get data from DB and save it array<Field>
         List<StoreXML.Field> fields = new ArrayList<>();
         String sqlSel = "SELECT * FROM itab;";
-
-        try (Connection conn = getConnection()) {
-            PreparedStatement statement = conn.prepareStatement(sqlSel);
+        if (connection.isClosed()) {
+            getConnection();
+        }
+        try (PreparedStatement statement = connection.prepareStatement(sqlSel)) {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 fields.add(new StoreXML.Field(rs.getInt(1)));
@@ -101,7 +92,6 @@ public class StoreSQL implements AutoCloseable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return fields;
     }
 
@@ -115,14 +105,12 @@ public class StoreSQL implements AutoCloseable {
         Properties prop = new Properties();
 
         try (InputStream inputStream =  new FileInputStream(config);) {
-
             prop.load(inputStream);
             return prop;
         } catch (IOException e) {
             e.printStackTrace();
-
-        return null;
-    }
+            return null;
+        }
 
     }
 }

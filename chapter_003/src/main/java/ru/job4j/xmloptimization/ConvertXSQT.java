@@ -12,19 +12,9 @@ import java.io.*;
 
 public class ConvertXSQT {
 
-    private File sourse;
-    private File dest;
-    private File scheme;
     private int value;
 
-    public ConvertXSQT(File source, File dest, File scheme) {
-        this.sourse = source;
-        this.dest = dest;
-        this.scheme = scheme;
-    }
-
-
-    public void convert(File source, File dest, File scheme) {
+    void convert(File source, File dest, File scheme) {
         //convert from xml to new xml file based on xlst scheme
         TransformerFactory factory = TransformerFactory.newInstance();
         Source xlst = new StreamSource(scheme);
@@ -35,10 +25,9 @@ public class ConvertXSQT {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-
     }
 
-    public int parseNcalc(File sourse) {
+    int parseNcalc(File sourse) {
         //pars xml file and count int fields
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
@@ -49,22 +38,16 @@ public class ConvertXSQT {
         } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();
         }
-
-
         return -1;
     }
 
     private class SAXpars extends DefaultHandler {
         //XML parser
-
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
-
             if (qName.equals("entry")) {
                 value = value + Integer.parseInt(attributes.getValue("value"));
             }
-
         }
     }
 }

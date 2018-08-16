@@ -15,19 +15,13 @@ import java.util.List;
 public class StoreXML {
     private File target;
 
-    public StoreXML(File target) {
+    StoreXML(File target) {
         this.target = target;
     }
 
-    public void setTarget(File target) {
-        this.target = target;
-    }
-
-
-    public boolean save(List<Field> list) {
+    boolean save(List<Field> list) {
         //save array<Field> to xml file
         Base base = new Base(list);
-
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Base.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
@@ -36,11 +30,8 @@ public class StoreXML {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-
-
         return true;
     }
-
 
     @XmlRootElement
     public static class Base {
@@ -76,7 +67,6 @@ public class StoreXML {
         public int getValue() {
             return value;
         }
-
 
         public void setValue(int value) {
             this.value = value;
