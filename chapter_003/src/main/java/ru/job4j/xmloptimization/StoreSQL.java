@@ -23,7 +23,7 @@ public class StoreSQL implements AutoCloseable {
         setConfig(config);
     }
 
-    public void setConfig(String config) {
+    private void setConfig(String config) {
         this.config = config;
         this.properties = getProperties();
 
@@ -100,11 +100,11 @@ public class StoreSQL implements AutoCloseable {
         this.connection.close();
     }
 
-    public Properties getProperties() {
+    private Properties getProperties() {
         //get propertyes and sql schemes from resourse file
         Properties prop = new Properties();
 
-        try (InputStream inputStream =  new FileInputStream(config);) {
+        try (InputStream inputStream =  new FileInputStream(config)) {
             prop.load(inputStream);
             return prop;
         } catch (IOException e) {

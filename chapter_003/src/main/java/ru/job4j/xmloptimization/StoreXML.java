@@ -19,7 +19,7 @@ public class StoreXML {
         this.target = target;
     }
 
-    boolean save(List<Field> list) {
+    public boolean save(List<Field> list) {
         //save array<Field> to xml file
         Base base = new Base(list);
         try {

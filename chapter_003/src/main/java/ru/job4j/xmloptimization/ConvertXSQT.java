@@ -14,7 +14,7 @@ public class ConvertXSQT {
 
     private int value;
 
-    void convert(File source, File dest, File scheme) {
+    public void convert(File source, File dest, File scheme) {
         //convert from xml to new xml file based on xlst scheme
         TransformerFactory factory = TransformerFactory.newInstance();
         Source xlst = new StreamSource(scheme);
@@ -27,7 +27,7 @@ public class ConvertXSQT {
         }
     }
 
-    int parseNcalc(File sourse) {
+    public int parseNcalc(File sourse) {
         //pars xml file and count int fields
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
@@ -44,7 +44,7 @@ public class ConvertXSQT {
     private class SAXpars extends DefaultHandler {
         //XML parser
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
             if (qName.equals("entry")) {
                 value = value + Integer.parseInt(attributes.getValue("value"));
             }
