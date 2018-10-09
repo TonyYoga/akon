@@ -9,7 +9,6 @@ public class ParseJob implements Job {
     public void execute(JobExecutionContext context) {
         JobDataMap jobDataMap = context.getMergedJobDataMap();
         String properties = jobDataMap.getString("properties");
-        System.out.println(properties + " " + new Date());
         ParserSqlRu parserSqlRu = new ParserSqlRu(PropertiesReader.getProperties(properties));
         parserSqlRu.parseUrl();
     }

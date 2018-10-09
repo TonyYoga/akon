@@ -41,28 +41,27 @@ public class StoreData implements AutoCloseable {
 
     public StoreData(Properties properties) {
         this.properties = properties;
-        getConnection();
+        try {
+            getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void getConnection() {
+    private void getConnection() throws SQLException{
         //establishing connection to DB
         String url = properties.getProperty("db.host");
-        try  {
-            connection = DriverManager.getConnection(url);
-            Statement statement = connection.createStatement();
+        connection = DriverManager.getConnection(url);
+        try (Statement statement = connection.createStatement()) {
             Class.forName("org.sqlite.JDBC");
             String sql = "CREATE TABLE IF NOT EXISTS vacancy (vText VARCHAR(300), vURL VARCHAR(300), vDate TIMESTAMP);";
             statement.executeUpdate(sql);
             connection = DriverManager.getConnection(url);
             connection.setAutoCommit(false);
             connection.commit();
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
             LOG.error(e.getMessage(), e);
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                LOG.error(e.getMessage(), e);
-            }
+            connection.rollback();
         }
     }
 
@@ -72,16 +71,15 @@ public class StoreData implements AutoCloseable {
         if (connection.isClosed()) {
             getConnection();
         }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet rs = statement.executeQuery();
-            //connection.commit();
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+            //ResultSet rs = statement.executeQuery();
             rs.next();
             rs.getLong(1);
             if (!rs.wasNull()) {
                 return new CheckDate(false, rs.getLong(1)); //have already rows in DB
             }
         } catch (SQLException e) {
-            //connection.rollback();
             LOG.error(e.getMessage(), e);
         }
         cal.set(Year.now().getValue(), Calendar.JANUARY, 1, 0, 0);
@@ -89,7 +87,7 @@ public class StoreData implements AutoCloseable {
     }
 
     public void storeData(ArrayList<Vacancy> array) throws SQLException {
-        StringBuffer sql = new StringBuffer("INSERT INTO vacancy (vText, vURL, vDate) VALUES (?, ?, ?)");
+        StringBuilder sql = new StringBuilder("INSERT INTO vacancy (vText, vURL, vDate) VALUES (?, ?, ?)");
         for (int i = 0; i < array.size() - 1; i++) {
             sql.append(", (?, ?, ?)");
         }
@@ -118,14 +116,10 @@ public class StoreData implements AutoCloseable {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, vacancy.getUrl());
             ResultSet rs = statement.executeQuery();
-            //connection.commit();
-            //rs.next();
-            //rs.getString(1);
             if (!rs.next()) {
                 return false;
             }
         } catch (SQLException e) {
-            //connection.rollback();
             LOG.error(e.getMessage(), e);
         }
         return true;

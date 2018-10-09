@@ -19,7 +19,7 @@ public class StoreXML {
         this.target = target;
     }
 
-    public boolean save(List<Field> list) {
+    public void save(List<Field> list) {
         //save array<Field> to xml file
         Base base = new Base(list);
         try {
@@ -30,7 +30,6 @@ public class StoreXML {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
     @XmlRootElement

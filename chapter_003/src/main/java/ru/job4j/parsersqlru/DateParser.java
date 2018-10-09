@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class DateParser {
     /**
@@ -49,7 +48,6 @@ public class DateParser {
         }
         return 0;
     }
-
 
     private DateFormatSymbols myDateFormatSymbols = new DateFormatSymbols() {
 

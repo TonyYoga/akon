@@ -28,10 +28,6 @@ public class ParserSqlRu {
         sd = new StoreData(properties);
     }
 
-    public ArrayList<Vacancy> getVacancies() {
-        return vacancies;
-    }
-
     void parseUrl() {
         String url = properties.getProperty("url.site");
         Document doc;
@@ -45,29 +41,7 @@ public class ParserSqlRu {
                 Pattern search = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
                 Element table = doc.select("table").get(2);
                 Elements rows = table.select("tr");
-                StoreData.CheckDate checkDate = sd.checkLastDate();
-                long stopDate = checkDate.getLastDate(); // to this value i need to put or start of the year or last date from DB
-                boolean isFirstPass = checkDate.isFirstPass();
-                boolean isOutDate = false;
-                int r = 1;  //first row is the col names so skip it.
-                while (r < rows.size() && !isOutDate) {
-                    Element row = rows.get(r);
-                    Elements cols = row.select("td");
-                    Matcher mSearch = search.matcher(cols.get(1).text());
-                    if (mSearch.find()) {
-                        long parsedDate = dateParser.getDateFromString(cols.get(5).text());
-                        Vacancy curVacancy = new Vacancy(cols.get(1).text(), cols.select("a[href]").attr("href"), parsedDate);
-                        if (parsedDate < stopDate) {
-                            isOutDate = true;
-                            isEnough = true;
-                        } else if (isFirstPass) {
-                            vacancies.add(curVacancy);
-                        } else if (!sd.isAdded(curVacancy)) {
-                            vacancies.add(curVacancy);
-                        }
-                    }
-                    r++;
-                }
+                isEnough = parseRow(rows, search, dateParser);
                 page++;
             }
             //System.out.println(new Date() + " was added " + vacancies.size());
@@ -75,10 +49,37 @@ public class ParserSqlRu {
             if (vacancies.size() > 0) {
                 sd.storeData(vacancies);
             }
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             LOG.error(e.getMessage(), e);
         }
     }
+
+    private boolean parseRow(Elements rows, Pattern search, DateParser dateParser) throws SQLException{
+        StoreData.CheckDate checkDate = sd.checkLastDate();
+        long stopDate = checkDate.getLastDate(); // to this value i need to put or start of the year or last date from DB
+        boolean isFirstPass = checkDate.isFirstPass();
+        boolean isOutDate = false;
+        boolean isEnough = false;
+        int rowCounter = 1;  //first row is the col names so skip it.
+        while (rowCounter < rows.size() && !isOutDate) {
+            Element row = rows.get(rowCounter);
+            Elements cols = row.select("td");
+            Matcher mSearch = search.matcher(cols.get(1).text());
+            if (mSearch.find()) {
+                long parsedDate = dateParser.getDateFromString(cols.get(5).text());
+                Vacancy curVacancy = new Vacancy(cols.get(1).text(), cols.select("a[href]").attr("href"), parsedDate);
+                if (parsedDate < stopDate) {
+                    isOutDate = true;
+                    isEnough = true;
+                } else if (isFirstPass) {
+                    vacancies.add(curVacancy);
+                } else if (!sd.isAdded(curVacancy)) {
+                    vacancies.add(curVacancy);
+                }
+            }
+            rowCounter++;
+        }
+        return isEnough;
+    }
+
 }

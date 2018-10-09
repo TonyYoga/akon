@@ -9,7 +9,7 @@ import java.util.Properties;
 public class ParserSqlRuApp {
     /**
      *  Entering point of application. SQL.RU Parser
-     *  @author  Konkin Anton
+     *  author  Konkin Anton
      *  @since   1.0
      *
      *
@@ -24,6 +24,7 @@ public class ParserSqlRuApp {
         Properties prop = PropertiesReader.getProperties(propFile);
         JobDetail job = JobBuilder.newJob(ParseJob.class).usingJobData("properties", propFile).build();
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity("SQL.ru parser").withSchedule(CronScheduleBuilder.cronSchedule(prop.getProperty("cron.time"))).build();
+
         try {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
