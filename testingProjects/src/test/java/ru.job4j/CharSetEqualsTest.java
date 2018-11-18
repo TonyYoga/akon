@@ -25,5 +25,15 @@ public class CharSetEqualsTest {
         assertThat(cse.equals(null), is(false));
     }
 
+    @Test
+    public void testcompareAll() {
+        assertThat(CharSetEquals.compareAll("hello", "hello"), is(true));
+        assertThat(CharSetEquals.compareAll("hello", "olleh"), is(true));
+        assertThat(CharSetEquals.compareAll("hello", "olle"), is(false));
+        assertThat(CharSetEquals.compareAll("hello", "Hello"), is(false));
+        assertThat(CharSetEquals.compareAll(null, "hello"), is(false));
+
+    }
+
 
 }
